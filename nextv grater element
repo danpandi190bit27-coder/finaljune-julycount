@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAP_SIZE 10001
+#define STACK_SIZE 1001
+
+int* nextGreaterElement(int* nums1, int nums1Size, int* nums2, int nums2Size, int* returnSize) {
+    int* res = (int*)malloc(nums1Size * sizeof(int));
+    for (int i = 0; i < nums1Size; i++) {
+        res[i] = -1;
+    }
+
+    int st[STACK_SIZE];
+    int top = -1;
+
+    int umap[MAP_SIZE];
+    for (int i = 0; i < MAP_SIZE; i++) {
+        umap[i] = -1;
+    }
+
+    for (int i = 0; i < nums2Size; i++) {
+        int element = nums2[i];
+
+        while (top >= 0 && element > st[top]) {
+            umap[st[top]] = element;
+            top--;
+        }
+
+        top++;
+        st[top] = element;
+    }
+
+    for (int i = 0; i < nums1Size; i++) {
+        int ele = nums1[i];
+        if (umap[ele] != -1) {
+            res[i] = umap[ele];
+        }
+    }
+
+    *returnSize = nums1Size;
+    return res;
+}
