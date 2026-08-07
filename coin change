@@ -1,0 +1,17 @@
+#include <limits.h>
+
+int coinChange(int* coins, int coinsSize, int amount) {
+    if (amount < 0) return -1;
+    if (amount == 0) return 0;
+    
+    int minCount = INT_MAX;
+    
+    for (int i = 0; i < coinsSize; i++) {
+        int res = coinChange(coins, coinsSize, amount - coins[i]);
+        if (res >= 0 && res < minCount) {
+            minCount = 1 + res;
+        }
+    }
+    
+    return (minCount == INT_MAX) ? -1 : minCount;
+}
