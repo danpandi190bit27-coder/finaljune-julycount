@@ -1,0 +1,36 @@
+#include <limits.h>
+
+
+int getMin(int a, int b) {
+    return (a < b) ? a : b;
+}
+
+// Helper function that does the inorder traversal
+void solve(struct TreeNode* root, int* ans, struct TreeNode** prev) {
+    if (!root) return;
+    
+    
+    solve(root->left, ans, prev);
+    
+    
+    if (!(*prev)) {
+        *prev = root;
+    } else {
+        *ans = getMin(*ans, root->val - (*prev)->val);
+    }
+    *prev = root;
+    
+    
+    solve(root->right, ans, prev);
+}
+
+int minDiffInBST(struct TreeNode* root) {
+   
+    int ans = INT_MAX;
+    struct TreeNode* prev = NULL;
+    
+   
+    solve(root, &ans, &prev);
+    
+    return ans;
+}
