@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+// Helper macro to find the maximum of two numbers
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+// Custom binary search function
+int binarySearch(int* dp, int dpSize, int val) {
+    int lo = 0;
+    int hi = dpSize - 1;
+    int res = 0;
+    
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (dp[mid] < val) {
+            res = mid;
+            lo = mid + 1;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    return res + 1;
+}
+
+// Comparator function for qsort
+int compare(const void* a, const void* b) {
+    int* envA = *(int**)a;
+    int* envB = *(int**)b;
+    
+    // If widths are equal, sort by height in descending order
+    if (envA[0] == envB[0]) {
+        return envB[1] - envA[1];
+    }
+    // Otherwise, sort by width in ascending order
+    return envA[0] - envB[0];
+}
+
+// Main function to find max envelopes
+int maxEnvelopes(int** envelopes, int envelopesSize, int* envelopesColSize) {
+    if (envelopesSize == 0) {
+        return 0;
+    }
+
+    // Sort the envelopes using standard qsort
+    qsort(envelopes, envelopesSize, sizeof(int*), compare);
+    
+    int lisSize = envelopesSize + 1;
+    int* LIS = (int*)malloc(lisSize * sizeof(int));
+    
+    // Initialize the LIS array
+    for (int i = 0; i < lisSize; i++) {
+        LIS[i] = INT_MAX;
+    }
+    LIS[0] = INT_MIN;
+    
+    int ans = 0;
+    for (int i = 0; i < envelopesSize; i++) {
+        int val = envelopes[i][1];
+        int insertIndex = binarySearch(LIS, lisSize, val);
+        
+        ans = MAX(ans, insertIndex);
+        
+        if (LIS[insertIndex] >= val) {
+            LIS[insertIndex] = val;
+        }
+    }
+    
+    // Free allocated memory
+    free(LIS);
+    
+    return ans;
+}
